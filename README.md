@@ -12,9 +12,11 @@ easiest method is proposed to settle EMMC flashing
 
 Methods:
 
-1) QSPI uboot
-2) USB blaster debug via DS-5
-3) SDMMC runtime hardware hack
+- QSPI uboot
+- USB Blaster debug
+  - DS-5
+  - OpenOCD+GDB
+- SDMMC runtime hardware hack
 
 ### QSPI
 
@@ -93,5 +95,23 @@ wait 1s
 restore u-boot/u-boot.dtb binary 0x0109D408
 start
 continue
+```
+
+Here is the .gdb
+
+```
+set architecture arm
+set remotetimeout 20000
+target remote localhost:3333
+monitor halt
+file ~/u-boot/spl/u-boot-spl
+load ~/u-boot/spl/u-boot-spl
+restore ~/u-boot/spl/u-boot-spl.dtb binary 0xFFFFBEB8
+thbreak spl_boot_device
+continue
+file ~/u-boot/u-boot
+load ~/u-boot/u-boot
+restore ~/u-boot/u-boot.dtb binary 0x0109D408
+monitor resume
 ```
 
