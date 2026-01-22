@@ -48,6 +48,10 @@ Pause the boot and use U-Boot basic commands to flash EMMC.
 
 We will also rely on USB or Ethernet to pass files to EMMC.
 
+For TFTP or USB, please do it small section as a time.
+
+DDR size and EMMC write might not that good on big slices.
+
 Here is the .ds file:
 
 ```
@@ -113,5 +117,56 @@ file ~/u-boot/u-boot
 load ~/u-boot/u-boot
 restore ~/u-boot/u-boot.dtb binary 0x0109D408
 monitor resume
+```
+
+# U-Boot TFTP
+
+On Linux side
+
+```
+split -b 256M -d --additional-suffix="" ac550.img ac550.part
+```
+
+On U-Boot side
+
+```
+// ========================================================================
+// UBOOT Run A
+// ========================================================================
+
+setenv ipaddr 192.168.2.150
+setenv serverip 192.168.2.100
+ping ${serverip}
+
+mmc dev 0
+
+setenv i 0
+setenv blk 0
+setenv blkper 0x10000
+setenv img ac550.part
+setenv loadaddr 0x03000000
+
+
+while itest ${i} -le 0xd2; do
+  if itest ${i} -lt 10; then
+    setenv part ${img}0${i}
+  else
+    setenv part ${img}${i}
+  fi
+  echo Loading ${part} to block ${blk}
+  tftp ${loadaddr} ${part}
+  mmc write ${loadaddr} ${blk} ${blkper}
+  setexpr blk ${blk} + ${blkper}
+  setexpr i ${i} + 1
+done
+
+// ========================================================================
+// UBOOT Run B
+// ========================================================================
+
+setenv part ${img}${i}
+echo Loading ${part} to block ${blk}
+tftp ${loadaddr} ${part}
+mmc write ${loadaddr} ${blk} 0x5000
 ```
 
