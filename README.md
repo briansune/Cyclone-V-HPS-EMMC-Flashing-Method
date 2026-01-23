@@ -124,7 +124,7 @@ monitor resume
 On Linux side
 
 ```
-split -b 256M -d --additional-suffix="" ac550.img ac550.part
+split -b 32M -d --additional-suffix="" ac550.img ac550.part
 ```
 
 On U-Boot side
