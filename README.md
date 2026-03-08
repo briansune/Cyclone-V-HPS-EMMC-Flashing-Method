@@ -109,7 +109,10 @@ For .gdb see attached files
 On Linux side
 
 ```
-split -b 32M -d --additional-suffix="" ac550.img ac550.part
+split -b 64M -d --additional-suffix="" ac550.img ac550.part
+rename 's/part00/part/' ac550.part00*
+rename 's/part0/part/' ac550.part0*
+mv ac550.part ac550.part0
 ```
 
 On U-Boot side
@@ -133,11 +136,7 @@ setenv loadaddr 0x03000000
 
 
 while itest ${i} -le 0xd2; do
-  if itest ${i} -lt 10; then
-    setenv part ${img}0${i}
-  else
-    setenv part ${img}${i}
-  fi
+  setenv part ${img}${i}
   echo Loading ${part} to block ${blk}
   tftp ${loadaddr} ${part}
   mmc write ${loadaddr} ${blk} ${blkper}
