@@ -109,7 +109,7 @@ For .gdb see attached files
 On Linux side
 
 ```
-split -b 64M -d --additional-suffix="" ac550.img ac550.part
+split -b 32M -d --additional-suffix="" ac550.img ac550.part
 rename 's/part00/part/' ac550.part00*
 rename 's/part0/part/' ac550.part0*
 mv ac550.part ac550.part0
@@ -130,6 +130,7 @@ mmc dev 0
 
 setenv i 0
 setenv blk 0
+# this is block #
 setenv blkper 0x10000
 setenv img ac550.part
 setenv loadaddr 0x03000000
