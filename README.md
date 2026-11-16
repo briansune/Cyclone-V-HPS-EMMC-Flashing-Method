@@ -1,4 +1,4 @@
-# Cyclone V HPS EMMC Flashing Method
+# Cyclone V HPS / ZYNQ 7000 or SoCFPGA i.e. ZYNQMP EMMC Flashing Method
 
 Cyclone V SoCFPGA is kind of trobulesome on EMMC flashing.
 
@@ -113,6 +113,33 @@ split -b 32M --hex-suffixes=0 ac550.img ac550.part
 ```
 
 On U-Boot side
+
+USB passing
+```
+setenv i 0
+setenv blk 0
+setenv blkper 0x10000
+setenv img emmc.part
+setenv loadaddr 0x03000000
+
+while itest ${i} -le 0xb6; do
+  if itest ${i} -lt 10; then
+    setenv part ${img}0${i}
+  else
+    setenv part ${img}${i}
+  fi
+  echo Loading ${part} from USB to block ${blk}
+  fatload usb 0:1 ${loadaddr} ${part}
+  mmc write ${loadaddr} ${blk} ${blkper}
+  setexpr blk ${blk} + ${blkper}
+  setexpr i ${i} + 1
+done
+
+setenv part ${img}${i}
+echo Loading ${part} to block ${blk}
+fatload usb 0:1 ${loadaddr} ${part}
+mmc write ${loadaddr} ${blk} 0x2800
+```
 
 ```
 // ========================================================================
