@@ -18,6 +18,12 @@ Methods:
   - OpenOCD+GDB
 - SDMMC runtime hardware hack
 
+ZYNQ 7000 - IMPORTANT ! (Direct boot from EMMC is not supported, which require QSPI SPL+UBOOT)
+
+Basically this is QSPI+EMMC so Cyclone V some how wins the boot style somehow.
+
+However the dual MMC IP is kind of win in ZYNQ 7000, which both socfpga on a par with features.
+
 ### QSPI
 
 This is very common and many examples are provided.
